@@ -1,6 +1,5 @@
 import { calculateCarValue } from "../services/model";
-
-
+import { CarValueResult } from "../types/carValue";
 
 test('calculateCarValue should return an error message for a missing model', () => {
   // Arrange
@@ -15,11 +14,12 @@ test('calculateCarValue should return an error message for a missing model', () 
   expect(result).toEqual(expectedValue);
 });
 
-test('calculateCarValue should return an error message for a missing year', () => {
+
+test('calculateCarValue should return an error message for invalid characters in the model', () => {
   // Arrange
-  const model = "Honda Civic";
-  const year = null;
-  const expectedValue = { error: "Model and year are required" };
+  const model = "Toyota C@mry!";
+  const year = 2020;
+  const expectedValue = { error: "Invalid characters in the model" };
 
   // Act
   const result = calculateCarValue(model, year);
@@ -29,36 +29,69 @@ test('calculateCarValue should return an error message for a missing year', () =
 });
 
 
-// test('calculateCarValue should return an error message for invalid characters in the model', () => {
-//   // Arrange
-//   const model = "Toyota C@mry!";
-//   const year = 2020;
-//   const expectedValue = { error: "Invalid characters in the model" };
+describe("calculateCarValue", () => {
+  test("should return the correct car value for valid inputs", () => {
+    // Arrange
+    const model = "Honda Civic";
+    const year = 2020;
+    const expectedValue: CarValueResult = { carValue: 3770 };
 
-//   // Act
-//   const result = calculateCarValue(model, year);
+    // Act
+    const result = calculateCarValue(model, year);
 
-//   // Assert
-//   expect(result).toEqual(expectedValue);
-// });
+    // Assert
+    expect(result).toEqual(expectedValue);
+  });
 
-// test('Take in model (ignoring numbers) and * 100, then adding the year', () => {
-//   // Arrange
-//   const input1: string = "mustang45";
-//   const input2: number = 1969;
-//   const expected = { carValue: 11469 };
-//   let theValue: { carValue: number }
-//   // Act
-//   expect(theValue).toStrictEqual(expected);
-// })
+  test("should return an error message for a missing model", () => {
+    // Arrange
+    const model = "";
+    const year = 2020;
+    const expectedValue: CarValueResult = { error: "Model and year are required" };
 
+    // Act
+    const result = calculateCarValue(model, year);
 
-// test('Take model Mustang (Value 95) * 100 + year 1969 = 11469', () => {
-//   // Arrange
-//   const input1: string = "mustang";
-//   const input2: number = 1969;
-//   const expected = { carValue: 11469 };
-//   let theValue: { carValue: number }
-//   // Act
-//   expect(theValue).toStrictEqual(expected);
-// })
+    // Assert
+    expect(result).toEqual(expectedValue);
+  });
+
+  // test("should return an error message for a missing year", () => {
+  //   // Arrange
+  //   const model = "Honda Civic";
+  //   const year = null;
+  //   const expectedValue: CarValueResult = { error: "Model and year are required" };
+
+  //   // Act
+  //   const result = calculateCarValue(model, year);
+
+  //   // Assert
+  //   expect(result).toEqual(expectedValue);
+  // });
+
+  test("should return an error message for invalid characters in the model", () => {
+    // Arrange
+    const model = "Toyota Camry!";
+    const year = 2020;
+    const expectedValue: CarValueResult = { error: "Invalid characters in the model" };
+
+    // Act
+    const result = calculateCarValue(model, year);
+
+    // Assert
+    expect(result).toEqual(expectedValue);
+  });
+
+  test("should return the correct car value for a model with numbers", () => {
+    // Arrange
+    const model = "Nissan Altima";
+    const year = 2020;
+    const expectedValue: CarValueResult = { carValue: 3960 };
+
+    // Act
+    const result = calculateCarValue(model, year);
+
+    // Assert
+    expect(result).toEqual(expectedValue);
+  });
+});
